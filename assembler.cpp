@@ -94,8 +94,10 @@ int main()
   }
   fclose(fp);
   fp = fopen("q1.txt","w");
+  int currinstruct = 0;
   for(auto it = instructions.begin();it!=instructions.end();it++)
   {
+    currinstruct++;
     char result[33];
     char instruct[10];
     int i=0;
@@ -109,12 +111,251 @@ int main()
     }
     i++;
     instruct[j] = '\0';
-    //i type
-    if(itypeop.find(instruct) != itype.end())
+    if(itypeop.find(instruct) == itypeop.end() && jtypeop.find(instruct) == jtypeop.end() && rtypefunc.find(instruct) == rtypefunc.end())
     {
-      char ireg[4];
+      cout<<"error: "<<currinstruct-1<<" "<<(*it);
+      cout<<"***********opperation not found**************"<<endl;
+      return 0;
+    }
+    //i type
+    if(itypeop.find(instruct) != itypeop.end())
+    {
+      char ireg[32];
       int ireg_ = 0;
-
+      string iopcode = itypeop[instruct];
+      for(;k<6;k++)
+      {
+        result[k] = iopcode[k];
+      }
+      while((*it)[i] != ',')
+      {
+        ireg[ireg_] = (*it)[i];
+        i++;
+        ireg_++;
+      }
+      i++;
+      ireg[ireg_] = '\0';
+      ireg_ = 0;
+      if(regref.find(ireg) == regref.end())
+      {
+        cout<<"error: "<<currinstruct-1<<" "<<(*it);
+        cout<<"***********register not found**************"<<endl;
+        return 0;
+      }
+      string ix = regref[ireg];
+      int ix_ = 0;
+      if(((string)instruct).compare("lw") != 0 && ((string)instruct).compare("lb") != 0 && ((string)instruct).compare("lui") != 0)
+      {
+        for(;k<11;k++)
+        {
+          result[k] = ix[ix_];
+          ix_++;
+        }
+      }
+      else
+      {
+        int temp_i = 11;
+        for(;temp_i<16;temp_i++)
+        {
+          result[temp_i] = ix[ix_];
+          ix_++;
+        }
+      }
+      if(((string)instruct).compare("beq") == 0 || ((string)instruct).compare("bne") == 0)
+      {
+        while((*it)[i] != ',')
+        {
+          ireg[ireg_] = (*it)[i];
+          i++;
+          ireg_++;
+        }
+        i++;
+        ireg[ireg_] = '\0';
+        ireg_ = 0;
+        if(regref.find(ireg) == regref.end())
+        {
+          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"***********register not found**************"<<endl;
+          return 0;
+        }
+        ix = regref[ireg];
+        ix_ = 0;
+        for(;k<16;k++)
+        {
+          result[k] = ix[ix_];
+          ix_++;
+        }
+        while((*it)[i] != '\n')
+        {
+          ireg[ireg_] = (*it)[i];
+          i++;
+          ireg_++;
+        }
+        i++;
+        ireg[ireg_-1] = '\0';
+        ireg_ = 0;
+        if(label.find(ireg) != label.end())
+        {
+          int iinteger = label[ireg] - currinstruct;
+          char signbit = '0';
+          if(iinteger < 0)
+          {
+            iinteger = -1*iinteger;
+            signbit = '1';
+          }
+          int result_i = 31;
+          char binary[32];
+          for(;result_i >=0;result_i--)
+          {
+            int b_ = iinteger%2;
+            if(b_ == 1)
+            {
+              binary[result_i] = '1';
+            }
+            else
+            {
+              binary[result_i] = '0';
+            }
+            iinteger = iinteger/2;
+          }
+          result_i = 31;
+          result[16] = signbit;
+          for(;result_i>16;result_i--)
+          {
+            result[result_i] = binary[result_i];
+          }
+        }
+        else
+        {
+            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"***********label not found**************"<<endl;
+            return 0;
+        }
+      }
+      else if(((string)instruct).compare("lui") == 0)
+      {
+        for(;k<11;k++)
+        {
+          result[k] = '0';
+        }
+        if((*it)[i] == '-')
+        {
+          i++;
+        }
+        while((*it)[i] != '\n')
+        {
+          ireg[ireg_] = (*it)[i];
+          i++;
+          ireg_++;
+        }
+        i++;
+        ireg[ireg_-1] = '\0';
+        ireg_ = 0;
+        int luiinteger = 0;
+        int luilenireg = strlen(ireg);
+        for(int lenireg_i = 0;lenireg_i<luilenireg;lenireg_i++)
+        {
+          luiinteger = luiinteger*10 + (ireg[lenireg_i] - '0');
+        }
+        int result_i = 31;
+        char binary[32];
+        for(;result_i >=0;result_i--)
+        {
+          int b_ = luiinteger%2;
+          if(b_ == 1)
+          {
+            binary[result_i] = '1';
+          }
+          else
+          {
+            binary[result_i] = '0';
+          }
+          luiinteger = luiinteger/2;
+        }
+        result_i = 31;
+        for(;result_i>15;result_i--)
+        {
+          result[result_i] = binary[result_i];
+        }
+      }
+      else
+      {
+        while((*it)[i] != '(')
+        {
+          ireg[ireg_] = (*it)[i];
+          i++;
+          ireg_++;
+        }
+        i++;
+        ireg[ireg_] = '\0';
+        ireg_ = 0;
+        int iinteger = 0;
+        char signbit = '0';
+        int lenireg = strlen(ireg);
+        for(int lenireg_i = 0;lenireg_i<lenireg;lenireg_i++)
+        {
+          iinteger = iinteger*10 + (ireg[lenireg_i] - '0');
+        }
+        if(iinteger < 0)
+        {
+          iinteger = -1*iinteger;
+          signbit = '1';
+        }
+        int result_i = 31;
+        char binary[32];
+        for(;result_i >=0;result_i--)
+        {
+          int b_ = iinteger%2;
+          if(b_ == 1)
+          {
+            binary[result_i] = '1';
+          }
+          else
+          {
+            binary[result_i] = '0';
+          }
+          iinteger = iinteger/2;
+        }
+        result_i = 31;
+        result[16] = signbit;
+        for(;result_i>16;result_i--)
+        {
+          result[result_i] = binary[result_i];
+        }
+        while((*it)[i] != ')')
+        {
+          ireg[ireg_] = (*it)[i];
+          i++;
+          ireg_++;
+        }
+        i++;
+        ireg[ireg_] = '\0';
+        ireg_ = 0;
+        if(regref.find(ireg) == regref.end())
+        {
+          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"***********register not found**************"<<endl;
+          return 0;
+        }
+        ix = regref[ireg];
+        ix_ = 0;
+        if(((string)instruct).compare("lw") != 0 && ((string)instruct).compare("lb") != 0)
+        {
+          for(;k<16;k++)
+          {
+            result[k] = ix[ix_];
+            ix_++;
+          }
+        }
+        else
+        {
+          for(;k<11;k++)
+          {
+            result[k] = ix[ix_];
+            ix_++;
+          }
+        }
+      }
     }
     //j type
     if(jtypeop.find(instruct) != jtypeop.end())
@@ -159,6 +400,12 @@ int main()
           result[result_i] = binary[result_i];
         }
       }
+      else
+      {
+        cout<<"error: "<<currinstruct-1<<" "<<(*it);
+        cout<<"***********label not found**************"<<endl;
+        return 0;
+      }
     }
     /*rtype*/
     if(rtypefunc.find(instruct) != rtypefunc.end())
@@ -193,6 +440,12 @@ int main()
         i++;
         reg[reg_-1] = '\0';
         reg_ = 0;
+        if(regref.find(reg) == regref.end())
+        {
+          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"***********register not found**************"<<endl;
+          return 0;
+        }
         x = regref[reg];
         x_ = 0;
         if(((string)instruct).compare("jr") == 0)
@@ -231,6 +484,12 @@ int main()
         i++;
         reg[reg_] = '\0';
         reg_ = 0;
+        if(regref.find(reg) == regref.end())
+        {
+          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"***********register not found**************"<<endl;
+          return 0;
+        }
         x = regref[reg];
         x_ = 0;
         for(;k<11;k++)
@@ -249,6 +508,12 @@ int main()
           i++;
           reg[reg_] = '\0';//
           reg_ = 0;
+          if(regref.find(reg) == regref.end())
+          {
+            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"***********register not found**************"<<endl;
+            return 0;
+          }
           x = regref[reg];
           x_ = 0;
           for(;k<16;k++)
@@ -265,6 +530,12 @@ int main()
           i++;
           reg[reg_ - 1] = '\0';
           reg_ = 0;
+          if(regref.find(reg) == regref.end())
+          {
+            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"***********register not found**************"<<endl;
+            return 0;
+          }
           x = regref[reg];
           x_ = 0;
           for(;k<21;k++)
@@ -284,6 +555,12 @@ int main()
           i++;
           reg[reg_-1] = '\0';//
           reg_ = 0;
+          if(regref.find(reg) == regref.end())
+          {
+            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"***********register not found**************"<<endl;
+            return 0;
+          }
           x = regref[reg];
           x_ = 0;
           for(;k<16;k++)
