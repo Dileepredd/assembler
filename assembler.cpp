@@ -66,7 +66,6 @@ int main()
     { "sb", "101000" },
     { "sw", "101011" },
     { "lb", "100000" },
-    //{ "la", "404" },
     { "lui", "001111" },
     { "beq", "000100" },
     { "bne", "000101" }
@@ -75,15 +74,14 @@ int main()
     { "j", "000010" },
     { "jal", "000011" }
   };
-//if required go for unordered maps to store instructions.
-  FILE *fp = fopen("q1.s","r");
+  FILE *fp = fopen("q3.s","r");
   int countinstruct = 0;
   while(fgets(str,30,fp) != NULL)
   {
     int lenstr = strlen(str);
-    if(str[lenstr-3] == ':')
+    if(str[lenstr-2] == ':')
     {
-      str[lenstr-3] = '\0';/////
+      str[lenstr-2] = '\0';/////
       label[str] = countinstruct;
     }
     else
@@ -93,7 +91,7 @@ int main()
     }
   }
   fclose(fp);
-  fp = fopen("q1.txt","w");
+  fp = fopen("q3.txt","w");
   int currinstruct = 0;
   for(auto it = instructions.begin();it!=instructions.end();it++)
   {
@@ -113,7 +111,7 @@ int main()
     instruct[j] = '\0';
     if(itypeop.find(instruct) == itypeop.end() && jtypeop.find(instruct) == jtypeop.end() && rtypefunc.find(instruct) == rtypefunc.end())
     {
-      cout<<"error: "<<currinstruct-1<<" "<<(*it);
+      cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
       cout<<"***********opperation not found**************"<<endl;
       return 0;
     }
@@ -138,7 +136,7 @@ int main()
       ireg_ = 0;
       if(regref.find(ireg) == regref.end())
       {
-        cout<<"error: "<<currinstruct-1<<" "<<(*it);
+        cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
         cout<<"***********register not found**************"<<endl;
         return 0;
       }
@@ -174,7 +172,7 @@ int main()
         ireg_ = 0;
         if(regref.find(ireg) == regref.end())
         {
-          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
           cout<<"***********register not found**************"<<endl;
           return 0;
         }
@@ -192,7 +190,7 @@ int main()
           ireg_++;
         }
         i++;
-        ireg[ireg_-1] = '\0';
+        ireg[ireg_] = '\0';
         ireg_ = 0;
         if(label.find(ireg) != label.end())
         {
@@ -227,7 +225,7 @@ int main()
         }
         else
         {
-            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
             cout<<"***********label not found**************"<<endl;
             return 0;
         }
@@ -249,7 +247,7 @@ int main()
           ireg_++;
         }
         i++;
-        ireg[ireg_-1] = '\0';
+        ireg[ireg_] = '\0';
         ireg_ = 0;
         int luiinteger = 0;
         int luilenireg = strlen(ireg);
@@ -333,7 +331,7 @@ int main()
         ireg_ = 0;
         if(regref.find(ireg) == regref.end())
         {
-          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
           cout<<"***********register not found**************"<<endl;
           return 0;
         }
@@ -375,7 +373,7 @@ int main()
         i++;
         l1++;
       }
-      label1[l1-1] = '\0';
+      label1[l1] = '\0';
       if(label.find(label1) != label.end())
       {
         int integer = label[label1];
@@ -402,7 +400,7 @@ int main()
       }
       else
       {
-        cout<<"error: "<<currinstruct-1<<" "<<(*it);
+        cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
         cout<<"***********label not found**************"<<endl;
         return 0;
       }
@@ -438,11 +436,11 @@ int main()
           reg_++;
         }
         i++;
-        reg[reg_-1] = '\0';
+        reg[reg_] = '\0';
         reg_ = 0;
         if(regref.find(reg) == regref.end())
         {
-          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
           cout<<"***********register not found**************"<<endl;
           return 0;
         }
@@ -486,7 +484,7 @@ int main()
         reg_ = 0;
         if(regref.find(reg) == regref.end())
         {
-          cout<<"error: "<<currinstruct-1<<" "<<(*it);
+          cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
           cout<<"***********register not found**************"<<endl;
           return 0;
         }
@@ -510,7 +508,7 @@ int main()
           reg_ = 0;
           if(regref.find(reg) == regref.end())
           {
-            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
             cout<<"***********register not found**************"<<endl;
             return 0;
           }
@@ -528,11 +526,11 @@ int main()
             reg_++;
           }
           i++;
-          reg[reg_ - 1] = '\0';
+          reg[reg_] = '\0';
           reg_ = 0;
           if(regref.find(reg) == regref.end())
           {
-            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
             cout<<"***********register not found**************"<<endl;
             return 0;
           }
@@ -553,11 +551,11 @@ int main()
             reg_++;
           }
           i++;
-          reg[reg_-1] = '\0';//
+          reg[reg_] = '\0';//
           reg_ = 0;
           if(regref.find(reg) == regref.end())
           {
-            cout<<"error: "<<currinstruct-1<<" "<<(*it);
+            cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
             cout<<"***********register not found**************"<<endl;
             return 0;
           }
@@ -576,10 +574,13 @@ int main()
       }
     }
     result[32] = '\n';
-    cout<<*it;
-    cout<<result<<endl;
+    //cout<<*it;
+    int currinstruct_i = (currinstruct-1)*4;
+    //cout<<currinstruct_i<<" "<<result<<endl;
+    fprintf(fp,"0x%04x  ", currinstruct_i);
     fputs(result,fp);
   }
   fclose(fp);
   return 0;
 }
+
