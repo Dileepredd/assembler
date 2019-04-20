@@ -44,14 +44,14 @@ int main()
   unordered_map<string,string> rtypefunc = {
     { "add", "100000" },
     { "addu", "100001" },
-    { "sub", "100010" },
+		{ "sub", "100010" },
     { "subu", "100011" },
-    { "and", "100100" },
-    { "or",  "100101" },
-    { "sllv", "000100" },
-    { "slt", "101010" },
-    { "srlv", "000110" },
-    { "jr",  "001000" },
+		{ "and", "100100" },
+		{ "or",  "100101" },
+		{ "sllv", "000100" },
+		{ "slt", "101010" },
+		{ "srlv", "000110" },
+		{ "jr",  "001000" },
     { "mult", "011000" },
     { "multu", "011001" },
     { "div", "011010" },
@@ -113,7 +113,17 @@ int main()
     {
       cout<<"error: at address "<<currinstruct-1<<" :- "<<(*it);
       cout<<"***********opperation not found**************"<<endl;
-      return 0;
+      int neglect = 0;
+      cout<<"1. abort\n"<<"2. continue\n";
+      cin>>neglect;
+      if(neglect == 1)
+      {
+        return 0;
+      }
+      else if(neglect == 2)
+      {
+        continue;
+      }
     }
     //i type
     if(itypeop.find(instruct) != itypeop.end())
